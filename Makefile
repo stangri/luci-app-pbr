@@ -10,6 +10,7 @@ PKG_VERSION:=1.1.5
 PKG_RELEASE:=8
 
 LUCI_TITLE:=Policy Based Routing Service Web UI
+LUCI_URL:=https://github.com/stangri/luci-app-pbr/
 LUCI_DESCRIPTION:=Provides Web UI for Policy Based Routing Service.
 LUCI_DEPENDS:=+luci-base +jsonfilter +pbr
 
