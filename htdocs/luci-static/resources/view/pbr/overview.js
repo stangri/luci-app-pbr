@@ -87,26 +87,6 @@ return view.extend({
 		o.default = "1";
 
 		var text = "";
-		if (reply.platform.adguardhome_ipset_support === null) {
-			text +=
-				_("The %s support is unknown.").format("<i>adguardhome.ipset</i>") +
-				"<br />";
-		} else if (!reply.platform.adguardhome_ipset_support) {
-			text +=
-				_("The %s is not supported on this system.").format(
-					"<i>adguardhome.ipset</i>"
-				) + "<br />";
-		}
-		if (reply.platform.dnsmasq_ipset_support === null) {
-			text +=
-				_("The %s support is unknown.").format("<i>dnsmasq.ipset</i>") +
-				"<br />";
-		} else if (!reply.platform.dnsmasq_ipset_support) {
-			text +=
-				_("The %s is not supported on this system.").format(
-					"<i>dnsmasq.ipset</i>"
-				) + "<br />";
-		}
 		if (reply.platform.dnsmasq_nftset_support === null) {
 			text +=
 				_("The %s support is unknown.").format("<i>dnsmasq.nftset</i>") +

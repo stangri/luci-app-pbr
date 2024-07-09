@@ -11,7 +11,7 @@ var pkg = {
 		return "pbr";
 	},
 	get ReadmeCompat() {
-		return "1.1.5-8/";
+		return "1.1.6-1/";
 	},
 	get URL() {
 		return (

@@ -11,7 +11,7 @@
 # ubus -S call luci.pbr getGateways '{"name": "pbr" }'
 # ubus -S call luci.pbr getInterfaces '{"name": "pbr" }'
 
-readonly luciCompat='4'
+readonly luciCompat='5'
 readonly pbrFunctionsFile='/etc/init.d/pbr'
 if [ -s "$pbrFunctionsFile" ]; then
 # shellcheck source=../../../../../pbr/files/etc/init.d/pbr
@@ -20,6 +20,23 @@ else
 	print_json_string 'error' "pbr init.d file ($pbrFunctionsFile) not found!"
 	logger -t pbr 'error' "pbr init.d file ($pbrFunctionsFile) not found!"
 fi
+
+# compatibility with old luci app versions
+is_running_iptables() { iptables -t mangle -L | grep -q PBR_PREROUTING >/dev/null 2>&1; }
+is_running() { is_running_iptables || is_running_nft; }
+check_ipset() { { [ -n "$ipset" ] && "$ipset" help hash:net; } >/dev/null 2>&1; }
+check_agh_ipset() {
+	check_ipset || return 1
+	check_agh || return 1
+	is_greater_or_equal "$($agh --version | sed 's|AdGuard Home, version v\(.*\)|\1|' | sed 's|-.*||')" '0.107.13'
+}
+check_dnsmasq_ipset() {
+	local o;
+	check_ipset || return 1
+	check_dnsmasq || return 1
+	o="$(dnsmasq -v 2>/dev/null)"
+	! echo "$o" | grep -q 'no-ipset' && echo "$o" | grep -q 'ipset'
+}
 
 get_init_list() {
 	local name
