@@ -14,12 +14,12 @@ var pkg = {
 		return "1.1.6-1";
 	},
 	get URL() {
-		return "https://docs.openwrt.melmac.net/" +
+		return (
+			"https://docs.openwrt.melmac.net/" +
 			pkg.Name +
 			"/" +
-			pkg.ReadmeCompat
-			? pkg.ReadmeCompat + "/"
-			: "";
+			(pkg.ReadmeCompat ? pkg.ReadmeCompat + "/" : "")
+		);
 	},
 	get DonateURL() {
 		return (
