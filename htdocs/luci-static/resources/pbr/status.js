@@ -11,11 +11,23 @@ var pkg = {
 		return "pbr";
 	},
 	get ReadmeCompat() {
-		return "1.1.6-1/";
+		return "1.1.6-1";
 	},
 	get URL() {
+		return "https://docs.openwrt.melmac.net/" +
+			pkg.Name +
+			"/" +
+			pkg.ReadmeCompat
+			? pkg.ReadmeCompat + "/"
+			: "";
+	},
+	get DonateURL() {
 		return (
-			"https://docs.openwrt.melmac.net/" + pkg.Name + "/" + pkg.ReadmeCompat
+			"https://docs.openwrt.melmac.net/" +
+			pkg.Name +
+			"/" +
+			(pkg.ReadmeCompat ? pkg.ReadmeCompat + "/" : "") +
+			"#Donate"
 		);
 	},
 };
@@ -189,13 +201,21 @@ var status = baseclass.extend({
 					{ class: "cbi-value-title" },
 					_("Service Gateways")
 				);
-				text = _(
-					"The %s indicates default gateway. See the %sREADME%s for details."
-				).format(
-					"<strong>✓</strong>",
-					'<a href="' + pkg.URL + '#AWordAboutDefaultRouting" target="_blank">',
-					"</a>"
-				);
+				text =
+					_(
+						"The %s indicates default gateway. See the %sREADME%s for details."
+					).format(
+						"<strong>✓</strong>",
+						'<a href="' +
+							pkg.URL +
+							'#AWordAboutDefaultRouting" target="_blank">',
+						"</a>"
+					) +
+					"<br />" +
+					_("Please %sdonate%s to support development of this project.").format(
+						"<a href='" + pkg.DonateURL + "' target='_blank'>",
+						"</a>"
+					);
 				var gatewaysDescr = E("div", { class: "cbi-value-description" }, text);
 				var gatewaysText = E("div", {}, reply.gateways);
 				var gatewaysField = E("div", { class: "cbi-value-field" }, [
@@ -546,6 +566,29 @@ var status = baseclass.extend({
 			var buttonsDiv = reply.version
 				? E("div", { class: "cbi-value" }, [buttonsTitle, buttonsField])
 				: "";
+
+			var donateTitle = E(
+				"label",
+				{ class: "cbi-value-title" },
+				_("Donate to the Project")
+			);
+			var donateText = E(
+				"div",
+				{ class: "cbi-value-field" },
+				E(
+					"div",
+					{ class: "cbi-value-description" },
+					_("Please %sdonate%s to support development of this project.").format(
+						"<a href='" + pkg.DonateURL + "' target='_blank'>",
+						"</a>"
+					)
+				)
+			);
+
+			var donateDiv = reply.version
+				? E("div", { class: "cbi-value" }, [donateTitle, donateText])
+				: "";
+
 			return E("div", {}, [
 				header,
 				statusDiv,
@@ -553,6 +596,7 @@ var status = baseclass.extend({
 				warningsDiv,
 				errorsDiv,
 				buttonsDiv,
+				//			donateDiv,
 			]);
 		});
 	},
