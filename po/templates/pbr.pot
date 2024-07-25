@@ -167,7 +167,7 @@ msgid "Error running custom user file '%s'"
 msgstr ""
 
 #: applications/luci-app-pbr/htdocs/luci-static/resources/pbr/status.js:415
-msgid "Errors encountered, please check the %sREADME%s!"
+msgid "Errors encountered, please check the %sREADME%s"
 msgstr ""
 
 #: applications/luci-app-pbr/htdocs/luci-static/resources/view/pbr/overview.js:210
