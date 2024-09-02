@@ -383,16 +383,19 @@ var status = baseclass.extend({
 					),
 					errorNftFileInstall: _("Failed to install fw4 nft file '%s'"),
 					errorNoDownloadWithSecureReload: _(
-						"Policy '%s' refers to URL which can't be downloaded in 'secure_reload' mode!"
+						"Policy '%s' refers to URL which can't be downloaded in 'secure_reload' mode"
 					),
 					errorDownloadUrlNoHttps: _(
-						"Failed to download '%s', HTTPS is not supported!"
+						"Failed to download '%s', HTTPS is not supported"
 					),
-					errorDownloadUrl: _("Failed to download '%s'!"),
+					errorDownloadUrl: _("Failed to download '%s'"),
 					errorFileSchemaRequiresCurl: _(
-						"The file:// schema requires curl, but it's not detected on this system!"
+						"The file:// schema requires curl, but it's not detected on this system"
 					),
-					errorTryFailed: _("Command failed: %s"),
+					errorTryFailed: _("Command failed: '%s'"),
+					errorIncompatibleUserFile: _(
+						"Incompatible custom user file detected '%s'"
+					),
 				};
 				var errorsTitle = E(
 					"label",
