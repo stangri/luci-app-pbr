@@ -409,6 +409,9 @@ var status = baseclass.extend({
 					errorDefaultFw4TableMissing: _("Default fw4 table '%s' is missing"),
 					errorDefaultFw4ChainMissing: _("Default fw4 chain '%s' is missing"),
 					errorRequiredBinaryMissing: _("Required binary '%s' is missing"),
+					errorInterfaceRoutingUnknownDevType: _(
+						"Unknown IPv6 Link type for device '%s'"
+					),
 				};
 				var errorsTitle = E(
 					"label",
