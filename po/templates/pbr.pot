@@ -342,7 +342,7 @@ msgstr ""
 
 #: applications/luci-app-pbr/htdocs/luci-static/resources/pbr/status.js:270
 msgid ""
-"Please set 'dhcp.lan.force=1' to speed up service start-up %s(more info)%s"
+"Please set 'dhcp.%%s.force=1' to speed up service start-up %s(more info)%s"
 msgstr ""
 
 #: applications/luci-app-pbr/htdocs/luci-static/resources/pbr/status.js:248
