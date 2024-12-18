@@ -44,7 +44,7 @@ get_init_list() {
 	name="${name:-$packageName}" 
 	json_init
 	json_add_object "$packageName"
-	json_add_boolean 'enabled' "$(is_enabled "$packageName")"
+	json_add_boolean 'enabled' "$(! is_enabled "$packageName";echo $?;)"
 	if is_running "$packageName"; then
 		json_add_boolean 'running' '1'
 	else
@@ -64,23 +64,12 @@ set_init_action() {
 		return
 	fi
 	case $action in
-		enable)
-			cmd="/etc/init.d/${name} ${action}"
-			cmd="${cmd} && uci_set ${name} config enabled 1 && uci_commit $name"
-		;;
-		disable)
-			cmd="/etc/init.d/${name} ${action}"
-			cmd="${cmd} && uci_set ${name} config enabled 0 && uci_commit $name"
-		;;
-		start|stop|reload|restart)
-			cmd="/etc/init.d/${name} ${action}"
+ 		start|stop|reload|restart|enable|disable)
+ 			/etc/init.d/${name} ${action} \
+ 			&& print_json_bool 'result' '1' \
+ 			|| print_json_bool 'result' '0'
 		;;
 	esac
-	if [ -n "$cmd" ] && eval "$cmd" 1>/dev/null 2>&1; then
-		print_json_bool 'result' '1'
-	else
-		print_json_bool 'result' '0'
-	fi
 }
 
 get_init_status() {
@@ -93,7 +82,7 @@ get_init_status() {
 	errors="$(ubus_get_status errors)"
 	json_init
 	json_add_object  "$packageName"
-	json_add_boolean 'enabled' "$(is_enabled "$packageName")"
+	json_add_boolean 'enabled' "$(! is_enabled "$packageName";echo $?;)"
 	if is_running "$packageName"; then
 		json_add_boolean 'running' '1'
 	else
