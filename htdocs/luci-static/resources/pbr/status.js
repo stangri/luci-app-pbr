@@ -11,7 +11,7 @@ var pkg = {
 		return "pbr";
 	},
 	get ReadmeCompat() {
-		return "1.1.8";
+		return "1.1.6-24";
 	},
 	get URL() {
 		return (
@@ -260,21 +260,10 @@ var status = baseclass.extend({
 						"The principal package (pbr) is outdated, please update it"
 					),
 					warningBadNftCallsInUserFile: _(
-						"Incompatible nft calls detected in user include file, disabling fw4 nft file support"
+						"Incompatible nft calls detected in user include file, disabling fw4 nft file support."
 					),
 					warningDnsmasqInstanceNoConfdir: _(
-						"Dnsmasq instance (%s) targeted in settings, but it doesn't have its own confdir"
-					),
-					warningDhcpLanForce: _(
-						_(
-							"Please set 'dhcp.%%s.force=1' to speed up service start-up %s(more info)%s"
-						).format(
-							"<a href='" +
-								pkg.URL +
-								"#Warning:Pleasesetdhcp.lan.force1" +
-								"' target='_blank'>",
-							"</a>"
-						)
+						"Dnsmasq instance (%s) targeted in settings, but it doesn't have its own confdir."
 					),
 				};
 				var warningsTitle = E(
@@ -295,7 +284,7 @@ var status = baseclass.extend({
 						text += _("Unknown warning") + "<br />";
 					}
 				});
-				var warningsText = E("div", { class: "cbi-value-description" }, text);
+				var warningsText = E("div", {}, text);
 				var warningsField = E(
 					"div",
 					{ class: "cbi-value-field" },
@@ -313,6 +302,7 @@ var status = baseclass.extend({
 					errorConfigValidation: _("Config (%s) validation failure").format(
 						"/etc/config/" + pkg.Name
 					),
+					errorNoIpFull: _("%s binary cannot be found").format("ip-full"),
 					errorNoIptables: _("%s binary cannot be found").format("iptables"),
 					errorNoIpset: _(
 						"Resolver set support (%s) requires ipset, but ipset binary cannot be found"
@@ -330,7 +320,7 @@ var status = baseclass.extend({
 						"The %s service failed to discover WAN gateway"
 					).format(pkg.Name),
 					errorNoWanInterface: _(
-						"The %s interface not found, you need to set the 'pbr.config.procd_wan_interface' option"
+						"The %s inteface not found, you need to set the 'pbr.config.procd_wan_interface' option"
 					),
 					errorNoWanInterfaceHint: _(
 						"Refer to https://docs.openwrt.melmac.net/pbr/#procd_wan_interface"
@@ -393,25 +383,16 @@ var status = baseclass.extend({
 					),
 					errorNftFileInstall: _("Failed to install fw4 nft file '%s'"),
 					errorNoDownloadWithSecureReload: _(
-						"Policy '%s' refers to URL which can't be downloaded in 'secure_reload' mode"
+						"Policy '%s' refers to URL which can't be downloaded in 'secure_reload' mode!"
 					),
 					errorDownloadUrlNoHttps: _(
-						"Failed to download '%s', HTTPS is not supported"
+						"Failed to download '%s', HTTPS is not supported!"
 					),
-					errorDownloadUrl: _("Failed to download '%s'"),
+					errorDownloadUrl: _("Failed to download '%s'!"),
 					errorFileSchemaRequiresCurl: _(
-						"The file:// schema requires curl, but it's not detected on this system"
+						"The file:// schema requires curl, but it's not detected on this system!"
 					),
-					errorTryFailed: _("Command failed: '%s'"),
-					errorIncompatibleUserFile: _(
-						"Incompatible custom user file detected '%s'"
-					),
-					errorDefaultFw4TableMissing: _("Default fw4 table '%s' is missing"),
-					errorDefaultFw4ChainMissing: _("Default fw4 chain '%s' is missing"),
-					errorRequiredBinaryMissing: _("Required binary '%s' is missing"),
-					errorInterfaceRoutingUnknownDevType: _(
-						"Unknown IPv6 Link type for device '%s'"
-					),
+					errorTryFailed: _("Command failed: %s"),
 				};
 				var errorsTitle = E(
 					"label",
@@ -435,7 +416,7 @@ var status = baseclass.extend({
 					'<a href="' + pkg.URL + '" target="_blank">',
 					"</a>!<br />"
 				);
-				var errorsText = E("div", { class: "cbi-value-description" }, text);
+				var errorsText = E("div", {}, text);
 				var errorsField = E("div", { class: "cbi-value-field" }, errorsText);
 				errorsDiv = E("div", { class: "cbi-value" }, [
 					errorsTitle,
