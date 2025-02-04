@@ -47,14 +47,15 @@ msgstr ""
 msgid ""
 "Allows to specify the list of interface names (in lower case) to be "
 "explicitly supported by the service. Can be useful if your OpenVPN tunnels "
-"have dev option other than tun* or tap*."
+"have dev option other than tun* or tap*, or have a WireGuard server which "
+"also functions as a client (site-to-site)."
 msgstr ""
 
 #: applications/luci-app-pbr/htdocs/luci-static/resources/view/pbr/overview.js:155
 msgid ""
-"Allows to specify the list of interface names (in lower case) to be ignored "
-"by the service. Can be useful if running both VPN server and VPN client on "
-"the router."
+"Allows to specify the list of interface names (lower case) to be ignored by "
+"the service. Can be useful for an OpenVPN server. WireGuard servers, which "
+"have a listenport, are handled automatically. So do not add those here."
 msgstr ""
 
 #: applications/luci-app-pbr/htdocs/luci-static/resources/view/pbr/overview.js:43
