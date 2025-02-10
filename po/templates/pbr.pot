@@ -55,7 +55,7 @@ msgstr ""
 msgid ""
 "Allows to specify the list of interface names (lower case) to be ignored by "
 "the service. Can be useful for an OpenVPN server. WireGuard servers, which "
-"have a listenport, are handled automatically. So do not add those here."
+"have a listen_port, are handled automatically. So do not add those here."
 msgstr ""
 
 #: applications/luci-app-pbr/htdocs/luci-static/resources/view/pbr/overview.js:43
