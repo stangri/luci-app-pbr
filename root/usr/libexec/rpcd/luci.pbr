@@ -22,7 +22,7 @@ else
 fi
 
 # compatibility with old luci app versions
-is_running_iptables() { iptables -t mangle -L | grep -q PBR_PREROUTING >/dev/null 2>&1; }
+is_running_iptables() { iptables -t mangle -n -L | grep -q PBR_PREROUTING >/dev/null 2>&1; }
 is_running() { is_running_iptables || is_running_nft; }
 check_ipset() { { [ -n "$ipset" ] && "$ipset" help hash:net; } >/dev/null 2>&1; }
 check_agh_ipset() {
