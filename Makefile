@@ -1,5 +1,5 @@
-# Copyright 2017-2024 MOSSDeF, Stan Grishin (stangri@melmac.ca).
-# This is free software, licensed under AGPL-3.0-or-later.
+# SPDX-Identifier-License: AGPL-3.0-or-later
+# Copyright 2017-2025 MOSSDeF, Stan Grishin (stangri@melmac.ca).
 
 include $(TOPDIR)/rules.mk
 
