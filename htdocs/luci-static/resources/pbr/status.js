@@ -384,6 +384,7 @@ var status = baseclass.extend({
 					errorPolicyProcessInsertionFailedIpv4: _(
 						"Insertion failed for IPv4 for policy '%s'"
 					),
+					errorPolicyProcessUnknownEntry: _("Unknown entry in policy '%s'"),
 					errorInterfaceRoutingEmptyValues: _(
 						"Received empty tid/mark or interface name when setting up routing"
 					),
