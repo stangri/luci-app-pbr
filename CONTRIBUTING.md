@@ -44,7 +44,7 @@ Please adhere to our [Code of Conduct](CODE_OF_CONDUCT.md) in all your interacti
 
 ## Contributing to the documentation
 
-The repository containing documentation for this project can be located at [https://github.com/stangri/docs.openwrt.melmac.net](https://github.com/stangri/docs.openwrt.melmac.net)
+The repository containing documentation for this project can be located at [https://github.com/stangri/docs.openwrt.melmac.ca](https://github.com/stangri/docs.openwrt.melmac.ca)
 
 ## Reporting Issues
 
