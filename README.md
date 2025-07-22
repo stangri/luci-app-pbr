@@ -15,5 +15,5 @@ Provides a visual way to manage traffic policies for routing over specific WAN o
 - Quick toggles for services and resolver settings
 - Integrated with OpenWrt’s service management
 
-📚 **Full documentation:**  
+**Full documentation:**  
 [https://docs.openwrt.melmac.net/pbr/](https://docs.openwrt.melmac.net/pbr/)
