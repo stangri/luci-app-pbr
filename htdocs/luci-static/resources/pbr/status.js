@@ -10,6 +10,9 @@ var pkg = {
 	get Name() {
 		return "pbr";
 	},
+	get LuciCompat() {
+		return 14;
+	},
 	get ReadmeCompat() {
 		return "1.1.8";
 	},
@@ -62,6 +65,12 @@ var getPlatformSupport = rpc.declare({
 	params: ["name"],
 });
 
+var getUbusInfo = rpc.declare({
+	object: "luci." + pkg.Name,
+	method: "getUbusInfo",
+	params: ["name"],
+});
+
 var _setInitAction = rpc.declare({
 	object: "luci." + pkg.Name,
 	method: "setInitAction",
@@ -87,41 +96,6 @@ var RPC = {
 			}
 		});
 	},
-	getInitList: function (name) {
-		getInitList(name).then(
-			function (result) {
-				this.emit("getInitList", result);
-			}.bind(this)
-		);
-	},
-	getInitStatus: function (name) {
-		getInitStatus(name).then(
-			function (result) {
-				this.emit("getInitStatus", result);
-			}.bind(this)
-		);
-	},
-	getGateways: function (name) {
-		getGateways(name).then(
-			function (result) {
-				this.emit("getGateways", result);
-			}.bind(this)
-		);
-	},
-	getPlatformSupport: function (name) {
-		getPlatformSupport(name).then(
-			function (result) {
-				this.emit("getPlatformSupport", result);
-			}.bind(this)
-		);
-	},
-	getInterfaces: function (name) {
-		getInterfaces(name).then(
-			function (result) {
-				this.emit("getInterfaces", result);
-			}.bind(this)
-		);
-	},
 	setInitAction: function (name, action) {
 		_setInitAction(name, action).then(
 			function (result) {
@@ -135,17 +109,10 @@ var status = baseclass.extend({
 	render: function () {
 		return Promise.all([
 			L.resolveDefault(getInitStatus(pkg.Name), {}),
-			//			L.resolveDefault(getGateways(pkg.Name), {}),
+			L.resolveDefault(getUbusInfo(pkg.Name), {}),
 		]).then(function (data) {
-			//			var replyStatus = data[0];
-			//			var replyGateways = data[1];
-			var reply;
-			var text;
-
-			if (data[0] && data[0][pkg.Name]) {
-				reply = data[0][pkg.Name];
-			} else {
-				reply = {
+			var reply = {
+				status: data[0]?.[pkg.Name] || {
 					enabled: null,
 					running: null,
 					running_iptables: null,
@@ -153,32 +120,57 @@ var status = baseclass.extend({
 					running_nft_file: null,
 					version: null,
 					gateways: null,
+					packageCompat: 0,
+					rpcdCompat: 0,
+				},
+				ubus: data[1]?.[pkg.Name]?.instances?.main?.data || {
+					packageCompat: 0,
 					errors: [],
 					warnings: [],
-				};
+				},
+			};
+
+			if (
+				pkg.LuciCompat !== reply.status.packageCompat ||
+				reply.status.packageCompat !== reply.status.rpcdCompat ||
+				pkg.LuciCompat !== reply.status.rpcdCompat
+			) {
+				reply.ubus.warnings.push({
+					code: "warningInternalVersionMismatch",
+					info: [
+						reply.ubus.packageCompat,
+						pkg.LuciCompat,
+						reply.status.rpcdCompat,
+						'<a href="' +
+							pkg.URL +
+							'#Warning:InternalVersionMismatch" target="_blank">',
+						"</a>",
+					],
+				});
 			}
 
+			var text;
 			var header = E("h2", {}, _("Policy Based Routing - Status"));
 			var statusTitle = E(
 				"label",
 				{ class: "cbi-value-title" },
 				_("Service Status")
 			);
-			if (reply.version) {
-				text = _("Version %s").format(reply.version) + " - ";
-				if (reply.running) {
+			if (reply.status.version) {
+				text = _("Version %s").format(reply.status.version) + " - ";
+				if (reply.status.running) {
 					text += _("Running");
-					if (reply.running_iptables) {
+					if (reply.status.running_iptables) {
 						text += " (" + _("iptables mode") + ").";
-					} else if (reply.running_nft_file) {
+					} else if (reply.status.running_nft_file) {
 						text += " (" + _("fw4 nft file mode") + ").";
-					} else if (reply.running_nft) {
+					} else if (reply.status.running_nft) {
 						text += " (" + _("nft mode") + ").";
 					} else {
 						text += ".";
 					}
 				} else {
-					if (reply.enabled) {
+					if (reply.status.enabled) {
 						text += _("Stopped.");
 					} else {
 						text += _("Stopped (Disabled).");
@@ -195,7 +187,7 @@ var status = baseclass.extend({
 			]);
 
 			var gatewaysDiv = [];
-			if (reply.gateways) {
+			if (reply.status.gateways) {
 				var gatewaysTitle = E(
 					"label",
 					{ class: "cbi-value-title" },
@@ -217,7 +209,7 @@ var status = baseclass.extend({
 						"</a>"
 					);
 				var gatewaysDescr = E("div", { class: "cbi-value-description" }, text);
-				var gatewaysText = E("div", {}, reply.gateways);
+				var gatewaysText = E("div", {}, reply.status.gateways);
 				var gatewaysField = E("div", { class: "cbi-value-field" }, [
 					gatewaysText,
 					gatewaysDescr,
@@ -229,8 +221,11 @@ var status = baseclass.extend({
 			}
 
 			var warningsDiv = [];
-			if (reply.warnings && reply.warnings.length) {
-				var textLabelsTable = {
+			if (reply.ubus.warnings && reply.ubus.warnings.length) {
+				var warningTable = {
+					warningInternalVersionMismatch: _(
+						"Internal version mismatch (package: %s, luci app: %s, luci rpcd: %s), you may need to update packages or reboot the device, please check the %sREADME%s."
+					),
 					warningResolverNotSupported: _(
 						"Resolver set (%s) is not supported on this system."
 					).format(L.uci.get(pkg.Name, "config", "resolver_set")),
@@ -283,14 +278,12 @@ var status = baseclass.extend({
 					_("Service Warnings")
 				);
 				var text = "";
-				reply.warnings.forEach((element) => {
-					if (element.id && textLabelsTable[element.id]) {
-						if (element.id !== "warningPolicyProcessCMD") {
-							text +=
-								(textLabelsTable[element.id] + ".").format(
-									element.extra || " "
-								) + "<br />";
-						}
+				reply.ubus.warnings.forEach((element) => {
+					if (element.code && warningTable[element.code]) {
+						text += Array.isArray(element.info)
+							? warningTable[element.code].format(...element.info) + "<br />"
+							: warningTable[element.code].format(element.info || " ") +
+							  "<br />";
 					} else {
 						text += _("Unknown warning") + "<br />";
 					}
@@ -308,8 +301,8 @@ var status = baseclass.extend({
 			}
 
 			var errorsDiv = [];
-			if (reply.errors && reply.errors.length) {
-				var textLabelsTable = {
+			if (reply.ubus.errors && reply.ubus.errors.length) {
+				var errorTable = {
 					errorConfigValidation: _("Config (%s) validation failure").format(
 						"/etc/config/" + pkg.Name
 					),
@@ -420,16 +413,13 @@ var status = baseclass.extend({
 					_("Service Errors")
 				);
 				var text = "";
-				reply.errors.forEach((element) => {
-					if (element.id && textLabelsTable[element.id]) {
-						if (element.id !== "errorPolicyProcessCMD") {
-							text +=
-								(textLabelsTable[element.id] + "!").format(
-									element.extra || " "
-								) + "<br />";
-						}
+				reply.ubus.errors.forEach((element) => {
+					if (element.code && errorTable[element.code]) {
+						text += Array.isArray(element.info)
+							? errorTable[element.code].format(...element.info) + "<br />"
+							: errorTable[element.code].format(element.info || " ") + "<br />";
 					} else {
-						text += _("Unknown error!") + "<br />";
+						text += _("Unknown error") + "<br />";
 					}
 				});
 				text += _("Errors encountered, please check the %sREADME%s").format(
@@ -546,10 +536,10 @@ var status = baseclass.extend({
 				_("Disable")
 			);
 
-			if (reply.enabled) {
+			if (reply.status.enabled) {
 				btn_enable.disabled = true;
 				btn_disable.disabled = false;
-				if (reply.running) {
+				if (reply.status.running) {
 					btn_start.disabled = true;
 					btn_action.disabled = false;
 					btn_stop.disabled = false;
@@ -583,7 +573,7 @@ var status = baseclass.extend({
 				btn_disable,
 			]);
 			var buttonsField = E("div", { class: "cbi-value-field" }, buttonsText);
-			var buttonsDiv = reply.version
+			var buttonsDiv = reply.status.version
 				? E("div", { class: "cbi-value" }, [buttonsTitle, buttonsField])
 				: "";
 
@@ -605,7 +595,7 @@ var status = baseclass.extend({
 				)
 			);
 
-			var donateDiv = reply.version
+			var donateDiv = reply.status.version
 				? E("div", { class: "cbi-value" }, [donateTitle, donateText])
 				: "";
 
@@ -633,4 +623,5 @@ return L.Class.extend({
 	getInitStatus: getInitStatus,
 	getInterfaces: getInterfaces,
 	getPlatformSupport: getPlatformSupport,
+	getUbusInfo: getUbusInfo,
 });
