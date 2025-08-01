@@ -121,9 +121,9 @@ var status = baseclass.extend({
 		return Promise.all([
 			L.resolveDefault(getInitStatus(pkg.Name), {}),
 			L.resolveDefault(getUbusInfo(pkg.Name), {}),
-		]).then(function (data) {
+		]).then(function ([initStatus, ubusInfo]) {
 			var reply = {
-				status: data[0]?.[pkg.Name] || {
+				status: initStatus?.[pkg.Name] || {
 					enabled: null,
 					running: null,
 					running_iptables: null,
@@ -134,7 +134,7 @@ var status = baseclass.extend({
 					packageCompat: 0,
 					rpcdCompat: 0,
 				},
-				ubus: data[1]?.[pkg.Name]?.instances?.main?.data || {
+				ubus: ubusInfo?.[pkg.Name]?.instances?.main?.data || {
 					packageCompat: 0,
 					errors: [],
 					warnings: [],
